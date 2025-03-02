@@ -1,7 +1,7 @@
-
-import { Injectable } from '@nestjs/common';
-
-export type User = any;
+import {Injectable, NotFoundException} from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { User } from './user.entity';
 
 export class UserDto {
     username: string;
@@ -11,46 +11,36 @@ export class UserDto {
 
 @Injectable()
 export class UsersService {
-    private readonly users = [
-        {
-            userId: 1,
-            username: 'john',
-            password: 'changeme',
-            createdAt: new Date(),
-            lastLogin: new Date(),
-        },
-        {
-            userId: 2,
-            username: 'maria',
-            password: 'guess',
-            createdAt: new Date(),
-            lastLogin: new Date(),
-        },
-        {
-            userId: 3,
-            username: 'root',
-            password: 'root',
-            createdAt: new Date(),
-            lastLogin: new Date(),
-        },
-    ];
+    constructor(
+        @InjectRepository(User)
+        private usersRepository: Repository<User>,
+    ) {}
 
-    async findOne(username: string): Promise<User | undefined> {
-        return this.users.find(user => user.username === username);
+    async create(user: Partial<User>): Promise<User> {
+        const newUser = this.usersRepository.create(user);
+        return this.usersRepository.save(newUser);
     }
 
     async findAll(): Promise<UserDto[]> {
-        return this.users.map(user => ({
+        const users = await this.usersRepository.find();
+        return users.map((user) => ({
+            userId: user.userId,
             username: user.username,
             createdAt: user.createdAt,
             lastLogin: user.lastLogin,
         }));
     }
 
+    async findOne(username: string): Promise<User | null> {
+        return this.usersRepository.findOne({ where: { username } });
+    }
+
     async updateLastLogin(username: string): Promise<void> {
         const user = await this.findOne(username);
-        if (user) {
-            user.lastLogin = new Date();
+        if (!user) {
+            throw new NotFoundException('User not found');
         }
+        user.lastLogin = new Date();
+        await this.usersRepository.save(user);
     }
 }
