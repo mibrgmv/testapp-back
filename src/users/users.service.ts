@@ -2,10 +2,31 @@ import {Injectable, NotFoundException} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './user.entity';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class UserDto {
+    @ApiProperty({
+        description: 'Unique identifier for the user',
+        example: 1
+    })
+    userId?: number;
+
+    @ApiProperty({
+        description: 'Username of the user',
+        example: 'johndoe'
+    })
     username: string;
+
+    @ApiProperty({
+        description: 'Date and time when the user was created',
+        example: '2023-01-01T00:00:00.000Z'
+    })
     createdAt: Date;
+
+    @ApiProperty({
+        description: 'Date and time of the user\'s last login',
+        example: '2023-01-02T12:00:00.000Z'
+    })
     lastLogin: Date;
 }
 
