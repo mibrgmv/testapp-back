@@ -14,6 +14,7 @@ async function bootstrap() {
       .addTag('users', 'User-related endpoints')
       .addTag('quiz', 'Quiz-related endpoints')
       .addTag('auth', 'Authentication-related endpoints')
+      .addTag('questions', 'Question-related endpoints')
       .addBearerAuth()
       .build();
 

@@ -6,7 +6,9 @@ import {User} from './users/user.entity';
 import {ConfigModule, ConfigService} from "@nestjs/config";
 import {QuizModule} from "./quiz/quiz.module";
 import {Quiz} from "./quiz/quiz.entity";
+import {Question} from "./questions/questions.entity";
 import {join} from 'path';
+import {QuestionsModule} from './questions/questions.module';
 
 @Module({
     imports: [
@@ -20,7 +22,7 @@ import {join} from 'path';
                 username: configService.get<string>('POSTGRES_USERNAME'),
                 password: configService.get<string>('POSTGRES_PASSWORD'),
                 database: configService.get<string>('POSTGRES_DATABASE'),
-                entities: [User, Quiz],
+                entities: [User, Quiz, Question],
                 synchronize: true,
                 migrationsRun: true,
                 migrations: [join(__dirname, 'migrations', '*.{ts,js}')],
@@ -31,6 +33,7 @@ import {join} from 'path';
         AuthModule,
         UsersModule,
         QuizModule,
+        QuestionsModule,
     ],
     controllers: [],
     providers: [],
